@@ -1,0 +1,3 @@
+[submodule "umi-arx"]
+	path = umi-arx
+	url = git@github.com:real-stanford/umi-arx.git
