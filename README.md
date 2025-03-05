@@ -191,6 +191,7 @@ Note that we do not use mirrors in the deployment setup. Therefore, we mask out 
 For multi-node training, please refer to `scripts/training/train_uva_umi_multi_node.sh` if you are using SLURM.
 
 
+
 ## 🩹 Add Your Own Task
 To add your own task, you need to implement a dataset, an environment runner, and a task configuration file. For guidance, please refer to the following examples from existing tasks:
 * `unified_video_action/config/task/umi_multi.yaml`
@@ -204,6 +205,28 @@ To add your own model, you need to implement a configuration file, a workspace, 
 * `unified_video_action/config/model/uva.yaml`
 * `unified_video_action/workspace/train_unified_video_action_workspace.py`
 * `unified_video_action/policy/unified_video_action_policy.py`
+
+
+## 🙋 Questions & Answers
+**Are there any tips for training UVA?**
+
+We found that two-stage training works better than training on both video and action tasks simultaneously. In the first stage, the model is trained on video generation, and in the second stage, it is fine-tuned on both video and action tasks.
+
+**How long does it take to train UVA?**
+
+Training time depends on both the size of the dataset and the complexity of the task. For the UMI task, we sampled 500 trajectories from each of the three datasets and trained the model using 8 H100 GPUs. The video generation task was trained for 2 days, while the joint video and action generation requires an additional 2 days.
+
+**What's the next step for UVA?**
+
+We believe there is still significant potential in UVA that remains unexplored, and we leave this for future work.
+
+Additional video data: UVA can leverage large amounts of actionless video data, which could provide valuable additional supervision. We plan to pretrain UVA on additional video data in the future.
+
+Multi-modality: UVA can be naturally extended to predict modalities beyond video and action, such as sound and force, by incorporating additional diffusion heads, offering a more comprehensive and versatile framework.
+
+Better architecture: The model architecture can be futuer improved by replacing the diffusion heads with flow matching.
+
+Larger model size: UVA's performance may currently be limited by the model size. We plan to explore larger models in the future.
 
 
 ## 🏷️ License
