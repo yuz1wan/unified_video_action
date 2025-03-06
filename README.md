@@ -56,7 +56,6 @@ python unified_video_action/utils/download.py
 
 
 #### Train Video Generation Model
-We find that first train the model on `video generation` task and then train the model on the `joint video and action` tasks performs better than directly training the model on the joint video and action tasks.
 We found that two-stage training works better than training on both video and action tasks directly. In the first stage, the model is trained on `video generation` task, and in the second stage, it is fine-tuned on both video and action tasks.
 
 To train the UVA model for the video generation task, we set `predict_action=False` and `selected_training_mode=video_model`. We did not incorporate additional video data during training. We believe that pretraining the model on large-scale web video datasets could substantially improve its generalization capabilities, and we plan to explore this approach in future work.
