@@ -6,11 +6,11 @@ shape_meta:
   image_resolution: 96
   action:
     shape:
-    - 2
+    - 14
   obs:
     agent_pos:
       shape:
-      - 2
+      - 14
       type: low_dim
     image:
       shape:
@@ -20,7 +20,7 @@ shape_meta:
       type: rgb
 
 dataset:
-  _target_: unified_video_action.dataset.pusht_image_dataset.PushTImageDataset
+  _target_: unified_video_action.dataset.human_image_dataset.HumanImageDataset
   language_emb_model: null
   horizon: 32
   pad_after: 7
@@ -29,7 +29,7 @@ dataset:
   val_ratio: 0.02
   data_aug: true
   normalizer_type: all
-  dataset_path: data/human_pp/pp_in.zarr
+  dataset_path: data/human_pp/pp_in_with_keypoints.zarr
   dataset_type: singletask
 
 env_runner:
