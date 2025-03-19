@@ -237,6 +237,33 @@ class TrainUnifiedVideoActionWorkspace(BaseWorkspace):
         for local_epoch_idx in range(cfg.training.num_epochs):
             step_log = dict()
             print(self.output_dir)
+            
+            # print("================================")
+            # print("Only For Debugging")
+            
+            # # ========= eval for this epoch ==========
+            # # policy = self.model
+            # policy = accelerator.unwrap_model(self.model)
+            # if cfg.training.use_ema:
+            #     policy = self.ema_model
+            # policy.eval()
+            # # ========= evaluate val action error =========
+            # if (
+            #     cfg.model.policy.action_model_params.predict_action
+            #     and "env_runner" not in cfg.task
+            # ):
+            #     # if has similartor, skip this
+            #     act_log = test_action_l2(
+            #         cfg,
+            #         policy,
+            #         val_dataloader,
+            #         local_epoch_idx,
+            #         self.output_dir,
+            #         device,
+            #         plot_actions=cfg.task.keypoints.eval
+            #     )
+            #     step_log.update(act_log)
+            # print("================================")
 
             # ========= train for this epoch ==========
             train_losses = list()
@@ -344,6 +371,7 @@ class TrainUnifiedVideoActionWorkspace(BaseWorkspace):
                     local_epoch_idx,
                     self.output_dir,
                     device,
+                    plot_actions=cfg.task.keypoints.eval
                 )
                 step_log.update(act_log)
 

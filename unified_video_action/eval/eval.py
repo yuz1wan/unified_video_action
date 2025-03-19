@@ -26,8 +26,37 @@ from unified_video_action.utils.data_utils import (
 )
 from unified_video_action.utils.language_model import extract_text_features
 
+def plot_keypoints(video, keypoints, device, color=(255, 0, 0)):
+    color = torch.tensor(color).to(device)
+    _B, _C, _T, _H, _W = video.size()         
+    norm_scale = torch.tensor([_W, _H]).to(device)
+    
+    # select frames from points to _T
+    selected_index = torch.linspace(0, keypoints.size(1) - 1, _T, dtype=torch.int64)
+    points = keypoints[:, selected_index, :6].to(device)
+    wrist = points[:, :, 0:2] * norm_scale
+    thumb = points[:, :, 2:4] * norm_scale
+    index = points[:, :, 4:6] * norm_scale
+    
+    for i in range(_B):
+        for j in range(_T):
+            for dx in range(-2, 3):  # Adjust the range to control the size
+                for dy in range(-2, 3):
+                    x_wrist = (wrist[i, j, 0] + dx).long()
+                    y_wrist = (wrist[i, j, 1] + dy).long()
+                    x_thumb = (thumb[i, j, 0] + dx).long()
+                    y_thumb = (thumb[i, j, 1] + dy).long()
+                    x_index = (index[i, j, 0] + dx).long()
+                    y_index = (index[i, j, 1] + dy).long()
 
-
+                    if 0 <= x_wrist < _W and 0 <= y_wrist < _H:
+                        video[i, :, j, y_wrist, x_wrist] = color.type(torch.uint8)
+                    if 0 <= x_thumb < _W and 0 <= y_thumb < _H:
+                        video[i, :, j, y_thumb, x_thumb] = color.type(torch.uint8)
+                    if 0 <= x_index < _W and 0 <= y_index < _H:
+                        video[i, :, j, y_index, x_index] = color.type(torch.uint8)
+                        
+    return video
 
 def prepare_data_predict_action(
     cfg, x, actions, model, T, device, language_goal=None, eval=False
@@ -95,7 +124,6 @@ def prepare_data_predict_action(
         trajectory,
         proprioception_input,
     )
-
 
 def test_video_fvd(
     cfg, model, loader, it, output_dir, device, name_label="", plot_actions=False
@@ -250,8 +278,7 @@ def test_video_fvd(
     log_data[f"{name_label}predicted_img"] = pred_video
 
     return log_data
-
-
+  
 def test_action_l2(
     cfg,
     model,
@@ -264,6 +291,8 @@ def test_action_l2(
     plot_actions=False,
 ):
     action_l2_distances = []
+    # reals = []
+    preds = []
 
     with torch.no_grad():
         for n, batch in enumerate(loader):
@@ -338,10 +367,48 @@ def test_action_l2(
                 )
                 action_l2_distances.append(l2_distance.mean())
 
+            if plot_actions:  
+                real = (1 + rearrange(real, "b c t h w -> b t h w c")).cpu()
+                real = real * 127.5
+                real = real.type(torch.uint8).cpu()
+                
+                x = (1 + x) * 127.5  # b c t h w
+                x = x.type(torch.uint8).cpu()
+                
+                if len(preds) < 4:
+                    vis_real = torch.cat(
+                        [
+                            x[:, :, : x.size(2) // 2],
+                            rearrange(real, "b t h w c -> b c t h w"),
+                        ],
+                        dim=2,
+                    )
+                    vis_real = plot_keypoints(vis_real, trajectory, device, color=(0,255,0))
+                    vis_pred = plot_keypoints(vis_real, act_out, device)
+                    # reals.append(vis_real)
+                    preds.append(vis_pred)
+                    
             if cfg.training.debug:
                 break
 
     log_data = dict()
+    
+    if plot_actions:
+        # reals = torch.cat(reals)
+        preds = torch.cat(preds)
+        os.makedirs(output_dir + "/vis", exist_ok=True)
+
+        pred_vid = save_image_grid(
+            preds.cpu().numpy(),
+            os.path.join(output_dir, f"vis/{name_label}pred_action{it}.gif"),
+            drange=[0, 255],
+            grid_size=(preds.size(0) // 4, 4),
+        )
+        pred_video = wandb.Video(
+            os.path.join(output_dir, f"vis/{name_label}pred_action{it}.gif")
+        )
+        log_data[f"{name_label}pred_action_img"] = pred_video
+        
     if cfg.model.policy.action_model_params.predict_action:
         log_data[f"{name_label}val_action_l2_distances"] = (
             torch.stack(action_l2_distances).mean().item()

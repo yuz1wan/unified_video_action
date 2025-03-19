@@ -32,19 +32,21 @@ dataset:
   dataset_path: data/human_pp/pp_in_with_keypoints.zarr
   dataset_type: singletask
 
-env_runner:
-  _target_: unified_video_action.env_runner.pusht_image_runner.PushTImageRunner
-  fps: 10
-  legacy_test: true
-  max_steps: 300
-  n_action_steps: 8
-  n_envs: null
-  n_obs_steps: 16
-  n_test: 50
-  n_test_vis: 4
-  n_train: 6
-  n_train_vis: 2
-  past_action: false
-  test_start_seed: 100000
-  train_start_seed: 0
-  fix_goal: true
+keypoints:
+  eval: true
+# env_runner:
+#   _target_: unified_video_action.env_runner.pusht_image_runner.PushTImageRunner
+#   fps: 10
+#   legacy_test: true
+#   max_steps: 300
+#   n_action_steps: 8
+#   n_envs: null
+#   n_obs_steps: 16
+#   n_test: 50
+#   n_test_vis: 4
+#   n_train: 6
+#   n_train_vis: 2
+#   past_action: false
+#   test_start_seed: 100000
+#   train_start_seed: 0
+#   fix_goal: true

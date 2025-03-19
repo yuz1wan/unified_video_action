@@ -1,0 +1,5 @@
+- model.policy.autoregressive_model_params.pretrained_model_path=checkpoints/uva_human_pp_video_model/checkpoints/latest.ckpt
+- model.policy.action_model_params.predict_action=True
+- model.policy.optimizer.learning_rate=1e-4
+- logging.project=uva
+- training.debug=True
