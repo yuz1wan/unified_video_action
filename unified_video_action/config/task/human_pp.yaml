@@ -34,6 +34,13 @@ dataset:
 
 keypoints:
   eval: true
+  n_action_steps: 8
+  n_obs_steps: 16
+  n_test: 50
+  n_test_vis: 4
+  n_train: 6
+  n_train_vis: 2
+  past_action: false
 # env_runner:
 #   _target_: unified_video_action.env_runner.pusht_image_runner.PushTImageRunner
 #   fps: 10

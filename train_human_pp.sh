@@ -7,7 +7,7 @@
 #     logging.project=uva \
 #     hydra.run.dir="checkpoints/uva_human_pp_video_model"
 
-CUDA_VISIBLE_DEVICES=0 accelerate launch --num_processes=1 train.py \
+CUDA_VISIBLE_DEVICES=1,2,3 accelerate launch --num_processes=3 train.py \
     --config-dir=. \
     --config-name=uva_human_pp.yaml \
     model.policy.autoregressive_model_params.pretrained_model_path=checkpoints/uva_human_pp_video_model/checkpoints/latest.ckpt \

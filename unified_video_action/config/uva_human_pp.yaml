@@ -6,14 +6,14 @@ defaults:
   - model: uva
 
 dataloader:
-  batch_size: 8
+  batch_size: 16
   num_workers: 8
   persistent_workers: false
   pin_memory: true
   shuffle: true
 
 val_dataloader:
-  batch_size: 8
+  batch_size: 16
   num_workers: 8
   persistent_workers: false
   pin_memory: true
@@ -35,17 +35,17 @@ training:
   seed: 42
   tqdm_interval_sec: 1.0
   use_ema: true
-  val_every: 1
+  val_every: 50
   mixed_precision: 'fp16'
   
 checkpoint:
   save_last_ckpt: true
   save_last_snapshot: false
   topk:
-    monitor_key: test_mean_score
-    format_str: epoch={epoch:04d}-test_mean_score={test_mean_score:.3f}.ckpt
-    k: 1
-    mode: max
+    monitor_key: val_action_l2_distances
+    format_str: epoch={epoch:04d}-val_action_l2_distances={val_action_l2_distances:.3f}.ckpt
+    k: 5
+    mode: min
 
 ema:
   _target_: unified_video_action.model.autoregressive.ema_model.EMAModel
