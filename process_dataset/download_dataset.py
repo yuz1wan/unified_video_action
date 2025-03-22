@@ -13,8 +13,8 @@ DATASETS = {
     # "dish_washing_0": "https://real.stanford.edu/umi/data/dish_washing/bimanual_dish_washing.zarr.zip",
     # "cloth_folding_0": "https://real.stanford.edu/umi/data/bimanual_cloth_folding/bimanual_cloth_folding.zarr.zip",
     # "dynamic_tossing_0": "https://real.stanford.edu/umi/data/dynamic_tossing/dynamic_tossing.zarr.zip",
-    # "cup_arrangement_0": "https://real.stanford.edu/umi/data/cup_in_the_wild/cup_in_the_wild.zarr.zip",
-    # "cup_arrangement_1": "https://real.stanford.edu/umi/data/cup_arrangement/cup_in_the_lab.zarr.zip",
+    "cup_arrangement_0": "https://real.stanford.edu/umi/data/cup_in_the_wild/cup_in_the_wild.zarr.zip",
+    "cup_arrangement_1": "https://real.stanford.edu/umi/data/cup_arrangement/cup_in_the_lab.zarr.zip",
     ### ManiWAV
     # "whiteboard_wiping_0": "https://real.stanford.edu/maniwav/data/wipe/replay_buffer.zarr.zip",
     # "bagle_flipping_0": "https://real.stanford.edu/maniwav/data/flip/replay_buffer.zarr.zip",
@@ -40,7 +40,7 @@ def download_data(dataset_name: str, url: str, output_dir: str) -> None:
     Download the data from the given URL and save it to the given dataset name.
     """
     os.makedirs(output_dir, exist_ok=True)
-    shm_data_dir = f"/dev/shm/{PROJECT_NAME}/temp"
+    shm_data_dir = f"dev/shm/{PROJECT_NAME}/temp"
     if ";" in url:
         urls = url.split(";")
         os.makedirs(shm_data_dir, exist_ok=True)
@@ -160,11 +160,11 @@ def process_dataset(dataset_name: str, dataset_url: str, data_dir: str) -> None:
         print(
             f"Skipping {dataset_name} because zip file already exists at {data_dir}/zip/{dataset_name}.zarr.zip"
         )
-    convert_zip_to_lz4(dataset_name, f"{data_dir}/zip")
+    # convert_zip_to_lz4(dataset_name, f"{data_dir}/zip")
 
 
 @click.command()
-@click.option("--data_dir", type=str, default="uva/umi_data")
+@click.option("--data_dir", type=str, default="data/umi_data")
 def main(data_dir: str):
     num_processes = mp.cpu_count()
     with mp.Pool(num_processes) as pool:

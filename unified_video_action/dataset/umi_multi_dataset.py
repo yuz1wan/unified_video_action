@@ -101,6 +101,10 @@ class UmiMultiDataset(Dataset[batch_type]):
         }
 
         if self.language_emb_model is not None:
+            self.language_emb_model_path = None if "language_emb_model_path" not in base_config else base_config[
+                "language_emb_model_path"
+            ]
+            print(f"Using language_emb_model from {self.language_emb_model_path}!")
             self.get_language_latent()
 
     def _create_index_pool(self):
@@ -127,7 +131,7 @@ class UmiMultiDataset(Dataset[batch_type]):
                             'mouse_arrangement_0': ['pick up the mouse and place it on the mouse pad']}
 
         self.text_model, self.tokenizer, max_length = get_text_model(
-            "umi", self.language_emb_model
+            "umi", self.language_emb_model, self.language_emb_model_path
         )
 
         with torch.no_grad():

@@ -26,6 +26,7 @@ dataset:
   zarr_path: "" # Will be overridden in the initialization function
   normalizer_type: none
   language_emb_model: clip
+  language_emb_model_path: /inspire/hdd/ws-950e6aa1-e29e-4266-bd8a-942fc09bb560/embodied-intelligence/public/models/openai/clip-vit-base-patch32
   # The rest should be inherited from umi_lazy_dataset that are kept the same for all the datasets.
 
 

@@ -4,22 +4,21 @@ import torch
 import pdb
 
 
-def get_text_model(task_name, language_emb_model):
+def get_text_model(task_name, language_emb_model, model_path=None):
+    tokenizer, text_model = None, None
+    
     if language_emb_model == "clip":
         with torch.no_grad():
-            tokenizer = AutoTokenizer.from_pretrained("openai/clip-vit-base-patch32")
-            text_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-    else:
-        tokenizer = None
-        text_model = None
-
-    if "libero_10" in task_name:
-        max_length = 30
-    elif "umi" in task_name:
-        max_length = 30
-    else:
-        max_length = 30
-
+            if model_path:
+                tokenizer = AutoTokenizer.from_pretrained(model_path)
+                text_model = CLIPModel.from_pretrained(model_path)
+            else:
+                tokenizer = AutoTokenizer.from_pretrained("openai/clip-vit-base-patch32")
+                text_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+                
+    
+    max_length = 30 # if any(x in task_name for x in ["libero_10", "umi"]) else 30
+    
     return text_model, tokenizer, max_length
 
 
